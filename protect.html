@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>TCG Expert Pro — Protected Access</title>
+
+  <meta name="theme-color" content="#0e1320"/>
+  <link rel="manifest" href="./manifest.json"/>
+  <link rel="icon" href="./logo-192.png"/>
+
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#121826;
+      --line:rgba(255,255,255,.10);
+      --text:#eaeaea;
+      --muted:rgba(255,255,255,.75);
+      --glow:rgba(0,229,255,.18);
+      --good:#24ff7a;
+      --bad:#ff4d4d;
+      --gold:#ffd700;
+    }
+    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+    body{
+      margin:0;min-height:100vh;color:var(--text);
+      background:
+        radial-gradient(900px 520px at 15% 10%, rgba(0,229,255,.12), transparent 60%),
+        radial-gradient(900px 520px at 85% 25%, rgba(255,77,77,.10), transparent 60%),
+        radial-gradient(900px 520px at 55% 85%, rgba(255,215,0,.08), transparent 60%),
+        var(--bg);
+      display:flex;align-items:center;justify-content:center;
+      padding:18px;
+    }
+    .wrap{width:min(980px,100%);display:grid;gap:14px}
+    .top{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+      padding:12px 14px;border-radius:18px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      backdrop-filter:blur(10px);
+      box-shadow:0 20px 60px rgba(0,0,0,.55);
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{
+      width:46px;height:46px;border-radius:14px;overflow:hidden;
+      border:1px solid var(--line);background:rgba(255,255,255,.05);
+      box-shadow:0 0 18px rgba(0,229,255,.18);
+      flex:0 0 auto;
+    }
+    .logo img{width:100%;height:100%;object-fit:cover}
+    .name{font-weight:900;letter-spacing:.2px;line-height:1.1}
+    .tag{font-size:12px;color:var(--muted);margin-top:2px}
+    .badge{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:10px 12px;border-radius:999px;
+      border:1px solid var(--line);background:rgba(0,0,0,.25);
+      font-weight:800;font-size:13px;color:var(--muted);
+    }
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.lock{background:var(--bad);box-shadow:0 0 14px rgba(255,77,77,.4)}
+    .dot.ok{background:var(--good);box-shadow:0 0 14px rgba(36,255,122,.4)}
+
+    .card{
+      padding:18px;border-radius:22px;
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      backdrop-filter:blur(10px);
+      box-shadow:0 22px 70px rgba(0,0,0,.60);
+      position:relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";position:absolute;inset:-2px;
+      background: radial-gradient(700px 240px at 20% 0%, var(--glow), transparent 60%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .card>*{position:relative}
+
+    h1{margin:0 0 8px;font-size:28px;letter-spacing:.2px}
+    p{margin:0 0 14px;color:var(--muted);line-height:1.45}
+
+    .field{
+      display:flex;gap:10px;flex-wrap:wrap;
+      padding:12px;border-radius:16px;
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--line);
+    }
+    input{
+      flex:1 1 260px;
+      background:transparent;border:none;outline:none;
+      color:var(--text);
+      font-size:16px;padding:10px 10px;
+      min-width:180px;
+    }
+    .btn{
+      border:none;cursor:pointer;font-weight:900;
+      padding:12px 16px;border-radius:14px;
+      color:#061016;
+      background:linear-gradient(90deg, #00e5ff, #ffd700);
+      box-shadow:0 10px 30px rgba(0,229,255,.18);
+      transition:transform .12s ease, filter .12s ease;
+      flex:0 0 auto;
+    }
+    .btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+    .btn.secondary{
+      background:rgba(255,255,255,.07);
+      color:var(--text);
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    .msg{
+      margin-top:12px;
+      padding:12px 14px;border-radius:16px;border:1px solid var(--line);
+      background:rgba(0,0,0,.20);
+      color:var(--muted);
+    }
+    .msg.good{border-color:rgba(36,255,122,.35);color:#c8ffe4}
+    .msg.bad{border-color:rgba(255,77,77,.4);color:#ffd0d0}
+    .small{margin-top:10px;font-size:12px;color:var(--muted)}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    a.link{color:#cfe7ff;text-decoration:none}
+    a.link:hover{text-decoration:underline}
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo"><img src="./logo-192.png" alt="TCG Expert Pro"></div>
+        <div>
+          <div class="name">TCG Expert Pro</div>
+          <div class="tag">Protected access • Enter your purchase key</div>
+        </div>
+      </div>
+
+      <div class="badge" id="badge">
+        <span class="dot lock" id="dot"></span>
+        <span id="badgeTxt">Locked</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h1>Unlock your toolkit</h1>
+      <p>Enter the key you received after purchase. Once unlocked, this device will remember it.</p>
+
+      <div class="field">
+        <input id="key" placeholder="Enter access key" autocomplete="off" />
+        <button class="btn" id="unlock">Unlock</button>
+        <button class="btn secondary" id="reset">Reset</button>
+      </div>
+
+      <div class="msg" id="msg">
+        Tip: For the best experience, install the app (Chrome → Add to Home screen / Install app).
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ===== SINGLE SHARED KEY =====
+  const SHARED_KEY = "TGE-EX-192P0R0-5-495D";
+  const UNLOCK_FLAG = "tcg_expert_pro_unlocked_v1";
+
+  const $ = (id) => document.getElementById(id);
+  const badgeTxt = $("badgeTxt");
+  const dot = $("dot");
+  const msg = $("msg");
+
+  function setLocked(text){
+    badgeTxt.textContent = "Locked";
+    dot.className = "dot lock";
+    msg.className = "msg";
+    msg.textContent = text || "Enter your access key to continue.";
+  }
+
+  function setUnlocked(){
+    badgeTxt.textContent = "Unlocked";
+    dot.className = "dot ok";
+    msg.className = "msg good";
+    msg.textContent = "Unlocked ✅ Redirecting to launcher…";
+    setTimeout(() => {
+      window.location.href = "./launcher.html";
+    }, 650);
+  }
+
+  function isUnlocked(){
+    return localStorage.getItem(UNLOCK_FLAG) === "1";
+  }
+
+  $("unlock").addEventListener("click", () => {
+    const entered = $("key").value.trim();
+    if(!entered) return setLocked("Enter your key.");
+    if(entered === SHARED_KEY){
+      localStorage.setItem(UNLOCK_FLAG, "1");
+      setUnlocked();
+    } else {
+      setLocked("Incorrect key ❌ Check your receipt and try again.");
+    }
+  });
+
+  $("reset").addEventListener("click", () => {
+    localStorage.removeItem(UNLOCK_FLAG);
+    $("key").value = "";
+    setLocked("Access reset. Enter your key again.");
+  });
+
+  $("key").addEventListener("keydown", (e) => {
+    if(e.key === "Enter") $("unlock").click();
+  });
+
+  if(isUnlocked()) setUnlocked();
+  else setLocked();
+
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  }
+</script>
+</body>
+</html> 
