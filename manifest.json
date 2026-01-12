@@ -1,0 +1,31 @@
+{
+  "id": "/tcg-expert-pro/",
+  "name": "TCG Expert Pro",
+  "short_name": "TCG Expert",
+  "description": "Verify PSA certs, run live/sold comps, and cross-check Pokemon card values.",
+  "start_url": "./launcher.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0f14",
+  "theme_color": "#0e1320",
+  "icons": [
+    {
+      "src": "logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+} 

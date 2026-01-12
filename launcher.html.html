@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TCG Expert Pro — Launcher</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0e1320" />
+
+<style>
+:root{
+  --bg:#0b0f14;
+  --card:#121826;
+  --line: rgba(255,255,255,.10);
+  --text:#eaeaea;
+  --accent:#00e5ff;
+  --accent2:#8cff00;
+  --accent3:#ff3b3b;
+  --shadow: 0 18px 40px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{
+  margin:0;color:var(--text);
+  background:
+    radial-gradient(900px 520px at 15% 10%, rgba(0,229,255,.12), transparent 60%),
+    radial-gradient(900px 520px at 85% 25%, rgba(140,255,0,.10), transparent 60%),
+    radial-gradient(900px 520px at 55% 85%, rgba(255,59,59,.10), transparent 60%),
+    var(--bg);
+}
+header{
+  position:sticky;top:0;z-index:50;
+  background:linear-gradient(180deg, rgba(14,19,32,.92), rgba(11,15,20,.78));
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 15px;
+  backdrop-filter: blur(8px);
+}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand img{height:46px;width:auto;border-radius:12px;box-shadow:0 0 18px rgba(0,229,255,.18);}
+.pill{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+  font-weight:800;
+}
+.dot{width:10px;height:10px;border-radius:50%;}
+.dot.ok{background:#24ff7a;box-shadow:0 0 14px rgba(36,255,122,.45);}
+.dot.bad{background:#ff3b3b;box-shadow:0 0 14px rgba(255,59,59,.45);}
+main{padding:18px;max-width:920px;margin:0 auto;}
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  box-shadow:var(--shadow);
+  margin-bottom:16px;
+}
+.hero{display:grid;gap:14px;align-items:center;}
+@media(min-width:860px){ .hero{grid-template-columns:340px 1fr;} }
+.toolkit{
+  width:100%;
+  max-width:340px;
+  border-radius:16px;
+  display:block;
+  margin:0 auto;
+  filter:drop-shadow(0 0 16px rgba(255,59,59,.22));
+}
+h1{margin:0 0 8px;font-size:28px;letter-spacing:.2px}
+p{margin:0;opacity:.86;line-height:1.45}
+.btnRow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px;}
+@media(max-width:520px){ .btnRow{grid-template-columns:1fr;} }
+.btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.10);
+  cursor:pointer;text-decoration:none;font-weight:900;letter-spacing:.2px;
+  transition:transform .12s ease, box-shadow .18s ease, filter .12s ease;
+  user-select:none;
+}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.05);}
+.btn.cyan{background:linear-gradient(45deg, rgba(0,229,255,.95), rgba(0,130,255,.88)); color:#061016; box-shadow:0 0 22px rgba(0,229,255,.25);}
+.btn.green{background:linear-gradient(45deg, rgba(140,255,0,.95), rgba(0,229,255,.55)); color:#061016; box-shadow:0 0 22px rgba(140,255,0,.18);}
+.btn.red{background:linear-gradient(45deg, rgba(255,59,59,.95), rgba(255,160,0,.65)); color:#160606; box-shadow:0 0 22px rgba(255,59,59,.20);}
+.btn.gray{background:rgba(255,255,255,.06); color:#fff;}
+.small{font-size:13px;opacity:.75;margin-top:10px}
+.code{
+  font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.08);
+  padding:10px;border-radius:12px;overflow:auto;
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="brand">
+    <img src="logo-192.png" alt="TCG Expert Pro">
+    <div style="font-weight:900;letter-spacing:.2px">TCG Expert Pro</div>
+  </div>
+  <div class="pill" id="swPill"><span class="dot bad" id="swDot"></span><span id="swTxt">Worker: Checking…</span></div>
+</header>
+
+<main>
+  <div class="card hero">
+    <div>
+      <img class="toolkit" src="toolkit.png" alt="Toolkit">
+    </div>
+    <div>
+      <h1>Launch Center</h1>
+      <p>Use this launcher to open the main toolkit or the bonus flip finder. Install as an app for the best experience.</p>
+
+      <div class="btnRow">
+        <a class="btn cyan" href="index.html">Launch Main Toolkit</a>
+        <a class="btn green" href="bonus.html" target="_blank" rel="noopener">Open Bonus (new tab)</a>
+        <button class="btn red" type="button" id="installBtn" style="display:none;">Install App (PWA)</button>
+        <button class="btn gray" type="button" onclick="location.reload()">Refresh / Recheck</button>
+      </div>
+
+      <div class="small">
+        Tip: On mobile, open this page in Chrome → <b>Add to Home screen</b> (or <b>Install app</b>).
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-weight:900;margin-bottom:8px">Your live link will be:</div>
+    <div class="code">https://tcgexpertpro-bit.github.io/tcg-expert-pro/launcher.html</div>
+  </div>
+</main>
+
+<script>
+/* Service worker */
+(async function(){
+  const dot = document.getElementById('swDot');
+  const txt = document.getElementById('swTxt');
+
+  function setOK(label){
+    dot.className = 'dot ok';
+    txt.textContent = label;
+  }
+  function setBAD(label){
+    dot.className = 'dot bad';
+    txt.textContent = label;
+  }
+
+  try{
+    if('serviceWorker' in navigator){
+      const reg = await navigator.serviceWorker.register('sw.js');
+      const ready = await navigator.serviceWorker.ready;
+      if(ready && ready.active) setOK('Worker: Live');
+      else setOK('Worker: Installed');
+    }else{
+      setBAD('Worker: Not supported');
+    }
+  }catch(e){
+    setBAD('Worker: Error');
+  }
+})();
+
+/* Install prompt */
+let deferredPrompt = null;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'flex';
+});
+
+installBtn.addEventListener('click', async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+});
+</script>
+</body>
+</html> 

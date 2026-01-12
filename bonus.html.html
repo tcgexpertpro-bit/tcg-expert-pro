@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TCG Expert Pro — Bonus Flip Finder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+
+<style>
+/* ===== Same layout foundation as index.html (preserved), but BONUS theme vars ===== */
+:root{
+  --bg:#07060b;
+  --card:#111126;
+  --accent:#ffd700;     /* gold */
+  --accent2:#b46bff;    /* purple neon */
+  --accent3:#33ffd1;    /* aqua neon */
+  --text:#f4f1ff;
+
+  --line: rgba(255,255,255,.10);
+  --shadow: 0 18px 40px rgba(0,0,0,.45);
+  --glowA: 0 0 18px rgba(255,215,0,.35);
+  --glowB: 0 0 22px rgba(180,107,255,.28);
+}
+
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+html,body{height:100%}
+body{
+  margin:0;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 600px at 15% 10%, rgba(180,107,255,.16), transparent 55%),
+    radial-gradient(900px 520px at 85% 25%, rgba(255,215,0,.12), transparent 55%),
+    radial-gradient(900px 520px at 55% 85%, rgba(51,255,209,.10), transparent 55%),
+    var(--bg);
+}
+
+/* ===== Header / Drawer (same structure as main site) ===== */
+header{
+  position:sticky;top:0;z-index:1000;
+  background:linear-gradient(180deg, rgba(14,12,25,.92), rgba(10,9,18,.78));
+  backdrop-filter: blur(8px);
+  display:flex;align-items:center;
+  padding:10px 15px;
+  border-bottom:1px solid var(--line);
+}
+
+.menu-btn{
+  font-size:26px;cursor:pointer;margin-right:14px;
+  user-select:none;
+  filter: drop-shadow(var(--glowB));
+}
+
+.logo{
+  max-height:48px; /* a little more presence on bonus page */
+  width:auto;
+  border-radius:10px;
+  box-shadow: var(--glowA);
+}
+
+.drawer{
+  position:fixed;top:0;left:-270px;
+  width:270px;height:100%;
+  background:linear-gradient(180deg, rgba(18,16,35,.98), rgba(10,10,18,.98));
+  padding:18px;
+  transition:0.28s ease;
+  z-index:2000;
+  border-right:1px solid var(--line);
+  box-shadow: 18px 0 60px rgba(0,0,0,.55);
+}
+.drawer.open{left:0}
+.drawer .drawer-title{
+  font-weight:900;
+  letter-spacing:.4px;
+  margin:4px 0 14px;
+  color: var(--accent);
+  text-shadow: var(--glowA);
+}
+.drawer a{
+  display:block;
+  color:#fff;
+  text-decoration:none;
+  padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  opacity:.95;
+}
+.drawer a:hover{
+  color:var(--accent);
+  text-shadow: var(--glowA);
+}
+
+/* ===== Sections / Cards (same structure) ===== */
+section{padding:26px 18px;}
+h2{margin:0 0 10px}
+.sub{opacity:.85;margin:0 0 14px;font-size:14px;line-height:1.4}
+
+.card{
+  background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.02));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:18px;
+  box-shadow: var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.card:before{
+  content:"";
+  position:absolute;inset:-2px;
+  background: radial-gradient(400px 220px at 10% 0%, rgba(255,215,0,.14), transparent 55%),
+              radial-gradient(420px 240px at 90% 10%, rgba(180,107,255,.12), transparent 60%);
+  pointer-events:none;
+}
+.card > *{position:relative}
+
+label{display:block;margin:10px 0 6px;color:rgba(255,255,255,.85);font-size:14px}
+select,button{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(7,9,18,.55);
+  color:#fff;
+  font-size:16px;
+  outline:none;
+}
+select:focus, button:focus{box-shadow:0 0 0 3px rgba(180,107,255,.18)}
+
+/* ===== Premium Buttons (glow + hover lights) ===== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:900;
+  letter-spacing:.2px;
+  border:1px solid rgba(255,255,255,.10);
+  background:linear-gradient(45deg, rgba(255,215,0,.95), rgba(255,159,26,.95));
+  color:#140f00;
+  cursor:pointer;
+  transition: transform .12s ease, filter .12s ease, box-shadow .18s ease;
+  box-shadow: var(--glowA);
+}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.06);box-shadow:0 0 26px rgba(255,215,0,.45)}
+.btn.alt{
+  background:linear-gradient(45deg, rgba(180,107,255,.92), rgba(82,191,255,.90));
+  color:#0a0612;
+  box-shadow: var(--glowB);
+}
+.btn.alt:hover{box-shadow:0 0 26px rgba(180,107,255,.45)}
+.btn.green{
+  background:linear-gradient(45deg, rgba(51,255,209,.92), rgba(255,215,0,.65));
+  color:#071015;
+  box-shadow:0 0 22px rgba(51,255,209,.30);
+}
+.btn.green:hover{box-shadow:0 0 26px rgba(51,255,209,.40)}
+.btn.gray{
+  background:rgba(255,255,255,.06);
+  color:#fff;
+}
+.btn.gray:hover{box-shadow:0 0 18px rgba(255,255,255,.14)}
+
+/* ===== Mobile-friendly action grid (no scattered buttons) ===== */
+.grid{
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap:10px;
+  margin-top:10px;
+}
+@media (max-width:520px){
+  .grid{grid-template-columns:1fr;}
+}
+
+/* ===== Bonus heading + badge ===== */
+.bonus-hero{
+  text-align:center;
+  margin-bottom:6px;
+}
+.bonus-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.05);
+  box-shadow: var(--glowA);
+  font-weight:900;
+  letter-spacing:.25px;
+  color:var(--accent);
+  text-shadow: var(--glowA);
+}
+
+/* ===== Toolkit banner (same placement as main) ===== */
+.toolkit-wrap{
+  padding-top:16px;
+  padding-bottom:6px;
+}
+.toolkit-img{
+  width:50%;
+  max-width:250px;
+  min-width:160px;
+  display:block;
+  margin:0 auto;
+  filter:drop-shadow(0 0 16px rgba(255,215,0,.30)) drop-shadow(0 0 12px rgba(180,107,255,.20));
+  border-radius:14px;
+}
+
+/* ===== Notes + pills ===== */
+.note{
+  margin-top:12px;
+  padding:14px;
+  border-radius:14px;
+  background:rgba(7,9,18,.55);
+  border:1px solid rgba(255,255,255,.10);
+}
+.note h3{margin:0 0 8px;color:var(--accent);text-shadow:var(--glowA);font-size:16px}
+.pill{
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);
+  margin:0 6px 8px 0;
+  font-size:12px;
+  color:#eaeaea;
+}
+.muted{color:rgba(255,255,255,.78);font-size:13px;line-height:1.45}
+
+/* ===== Footer ===== */
+footer{
+  padding:18px;
+  text-align:center;
+  font-size:13px;
+  opacity:.85;
+  border-top:1px solid var(--line);
+  background:rgba(10,10,18,.55);
+}
+footer a{color:var(--accent2);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* ===== Disclaimer modal (same pattern) ===== */
+.modal{
+  display:none;position:fixed;inset:0;
+  background:rgba(0,0,0,.82);
+  z-index:3000;
+}
+.modal-content{
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.12);
+  padding:18px;
+  margin:12% auto;
+  width:92%;
+  max-width:520px;
+  border-radius:16px;
+  box-shadow: var(--shadow), var(--glowB);
+}
+</style>
+</head>
+
+<body>
+
+<!-- Disclaimer (bonus-specific copy) -->
+<div class="modal" id="disclaimerModal" style="display:block;">
+  <div class="modal-content">
+    <h3 style="margin:0 0 10px;color:var(--accent);text-shadow:var(--glowA);">Bonus Content Disclaimer</h3>
+    <p class="muted" style="margin:0 0 14px">
+      This Bonus Flip Finder is for educational use only. Always verify authenticity and pricing using multiple sources.
+      We are not responsible for counterfeit items or financial loss.
+    </p>
+    <button class="btn" onclick="document.getElementById('disclaimerModal').style.display='none'">Accept & Continue</button>
+  </div>
+</div>
+
+<!-- Drawer (same layout as main site + Home link opens new tab) -->
+<div class="drawer" id="drawer">
+  <div class="drawer-title">TCG Expert Pro — BONUS</div>
+  <a href="index.html" target="_blank" rel="noopener">↩ Home (opens new tab)</a>
+  <a href="#flip">Flip Finder</a>
+  <a href="#how">How to use</a>
+</div>
+
+<header>
+  <div class="menu-btn" onclick="toggleDrawer()">☰</div>
+  <img class="logo" src="logo-192.png" alt="TCG Expert Pro">
+</header>
+
+<!-- Toolkit banner (same placement as index.html) -->
+<section class="toolkit-wrap">
+  <img class="toolkit-img" src="toolkit.png" alt="Toolkit">
+</section>
+
+<section id="flip">
+  <div class="bonus-hero">
+    <div class="bonus-badge">✨ BONUS • Pokémon Flip Finder (20 Targets)</div>
+  </div>
+  <p class="sub" style="text-align:center;margin-top:10px">
+    Pick a category + card, then jump straight to the exact searches. Built to help you find undervalued raw gems faster.
+  </p>
+
+  <div class="card">
+    <label for="catSelect"><b>Category</b></label>
+    <select id="catSelect"></select>
+
+    <label for="cardSelect"><b>Card (Full name)</b></label>
+    <select id="cardSelect"></select>
+
+    <div class="grid">
+      <button class="btn gray" onclick="ebaySoldUK()">eBay UK — SOLD</button>
+      <button class="btn alt" onclick="ebayLiveUK()">eBay UK — LIVE</button>
+      <button class="btn alt" onclick="ebaySoldWW()">eBay Worldwide — SOLD</button>
+      <button class="btn green" onclick="vintedSearch()">Vinted — Search</button>
+    </div>
+
+    <div class="note" id="noteBox">
+      <h3>Quick Reference</h3>
+      <div id="pills"></div>
+      <div class="muted" id="notes">Select a card to see the “how to tell” notes.</div>
+    </div>
+
+    <div style="margin-top:12px">
+      <a class="btn gray" href="index.html" target="_blank" rel="noopener">↩ Back to Main (new tab)</a>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="card">
+    <h2 style="margin:0 0 8px">How to use (fast)</h2>
+    <ol class="muted" style="margin:0;padding-left:18px;line-height:1.55">
+      <li>Start with <b>SOLD</b> to learn the real market price.</li>
+      <li>Use <b>LIVE</b> to spot underpriced listings.</li>
+      <li>For high-risk cards: demand clear back photos + compare with official references.</li>
+      <li>Cross-check pricing in your main page tools.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <div>© 2026 TCG Expert Pro • Bonus Page</div>
+  <div style="margin-top:6px">
+    <a href="index.html" target="_blank" rel="noopener">Open Main</a>
+    ·
+    <a href="#flip">Back to Top</a>
+  </div>
+</footer>
+
+<script>
+function toggleDrawer(){
+  document.getElementById('drawer').classList.toggle('open');
+}
+
+/* ===== Your Flip Finder DATA + logic (unchanged) ===== */
+const DATA = {
+  "Grails": [
+    {
+      name: "Charizard — Base Set Holo 4/102 (Unlimited) — 1999",
+      search: "Charizard 4/102 Base Set holo raw",
+      tags: ["Base Set", "Holo", "Unlimited"],
+      notes: "How to tell: NO 1st Edition stamp. Usually has a shadow on the right side of the artwork box. Don’t confuse with Base Set 2 (has a '2' set symbol)."
+    },
+    {
+      name: "Charizard — Base Set Holo 4/102 (Shadowless) — 1999",
+      search: "Charizard 4/102 shadowless holo raw",
+      tags: ["Base Set", "Holo", "Shadowless"],
+      notes: "How to tell: NO shadow around the artwork box + thinner text styling. Don’t confuse with Unlimited (has shadow) or 1st Edition (stamp)."
+    },
+    {
+      name: "Charizard — Base Set Holo 4/102 (1st Edition Shadowless) — 1999",
+      search: "1st edition Charizard 4/102 shadowless holo raw",
+      tags: ["Base Set", "Holo", "1st Ed", "Shadowless"],
+      notes: "How to tell: 1st Edition stamp + NO shadow. High fake risk—prioritise clear back photo, print sharpness, and correct holo."
+    }
+  ],
+
+  "Vintage Liquid": [
+    { name:"Blastoise — Base Set Holo 2/102 — 1999", search:"Blastoise 2/102 base set holo raw",
+      tags:["Base Set","Holo"], notes:"How to tell: No set symbol on the right. Classic Base layout." },
+    { name:"Venusaur — Base Set Holo 15/102 — 1999", search:"Venusaur 15/102 base set holo raw",
+      tags:["Base Set","Holo"], notes:"How to tell: No set symbol. Strong nostalgia demand." },
+    { name:"Alakazam — Base Set Holo 1/102 — 1999", search:"Alakazam 1/102 base set holo raw",
+      tags:["Base Set","Holo"], notes:"How to tell: No set symbol. Watch for holo scratching." },
+    { name:"Mewtwo — Base Set Holo 10/102 — 1999", search:"Mewtwo 10/102 base set holo raw",
+      tags:["Base Set","Holo"], notes:"How to tell: No set symbol. Often found in mixed lots." },
+    { name:"Lugia — Neo Genesis Holo 9/111 — 2000", search:"Lugia 9/111 neo genesis holo raw",
+      tags:["Neo Genesis","Holo"], notes:"How to tell: Neo Genesis set symbol. Don’t confuse with other Lugia sets." },
+    { name:"Umbreon — Neo Discovery Holo 13/75 — 2001", search:"Umbreon 13/75 neo discovery holo raw",
+      tags:["Neo Discovery","Holo"], notes:"How to tell: Neo Discovery symbol. Huge fan base; condition matters." },
+    { name:"Espeon — Neo Discovery Holo 1/75 — 2001", search:"Espeon 1/75 neo discovery holo raw",
+      tags:["Neo Discovery","Holo"], notes:"How to tell: Neo Discovery symbol. Often pairs with Umbreon buyers." }
+  ],
+
+  "Shining": [
+    { name:"Shining Charizard — Neo Destiny 107/105 — 2002", search:"Shining Charizard 107/105 neo destiny raw",
+      tags:["Neo Destiny","Shining"], notes:"How to tell: Shining outline effect + Neo Destiny symbol. Watch for proxies." },
+    { name:"Shining Mewtwo — Neo Destiny 109/105 — 2002", search:"Shining Mewtwo 109/105 neo destiny raw",
+      tags:["Neo Destiny","Shining"], notes:"How to tell: Shining outline + correct numbering. Strong liquidity." },
+    { name:"Shining Gyarados — Neo Revelation 65/64 — 2001", search:"Shining Gyarados 65/64 neo revelation raw",
+      tags:["Neo Revelation","Shining"], notes:"How to tell: Shining outline + 65/64 (over the set total). Often edge wear." }
+  ],
+
+  "Gold Stars": [
+    { name:"Rayquaza ★ — EX Deoxys Gold Star 107/107 — 2005", search:"Rayquaza gold star 107/107 ex deoxys raw",
+      tags:["EX Deoxys","Gold Star"], notes:"How to tell: Small gold star near name + 107/107. Avoid modern reprints/celebrations." },
+    { name:"Latias ★ — EX Deoxys Gold Star 105/107 — 2005", search:"Latias gold star 105/107 ex deoxys raw",
+      tags:["EX Deoxys","Gold Star"], notes:"How to tell: Gold star + 105/107. BIG trap: 2006 World Championships version has a special ‘World Championships’ card back and is much cheaper." },
+    { name:"Latios ★ — EX Deoxys Gold Star 106/107 — 2005", search:"Latios gold star 106/107 ex deoxys raw",
+      tags:["EX Deoxys","Gold Star"], notes:"How to tell: Gold star + 106/107. Same trap risk as Latias—check the card back." }
+  ],
+
+  "Crystals & Special Holos": [
+    { name:"Charizard — Skyridge Crystal Holo 146/144 — 2003", search:"Charizard 146/144 skyridge crystal holo raw",
+      tags:["Skyridge","Crystal","Secret Rare"], notes:"How to tell: Crystal style + 146/144 (over set total). Very high value; verify authenticity." },
+    { name:"Lugia — Aquapolis Crystal Holo 149/144 — 2003", search:"Lugia 149/144 aquapolis crystal holo raw",
+      tags:["Aquapolis","Crystal","Secret Rare"], notes:"How to tell: Aquapolis symbol + 149/144. Rare; watch for heavy play." },
+    { name:"Charizard — Legendary Collection Reverse Holo 3/110 — 2002", search:"Charizard 3/110 legendary collection reverse holo raw",
+      tags:["Legendary Collection","Reverse Holo"], notes:"How to tell: ‘Firework’ reverse holo pattern across the card. Don’t confuse with normal holo." },
+    { name:"Deoxys — EX Deoxys Holo 2/107 — 2005", search:"Deoxys 2/107 ex deoxys holo raw",
+      tags:["EX Deoxys","Holo"], notes:"How to tell: EX Deoxys set symbol + 2/107. Great lot-hunting target." }
+  ]
+};
+
+const catSelect = document.getElementById("catSelect");
+const cardSelect = document.getElementById("cardSelect");
+const notesEl = document.getElementById("notes");
+const pillsEl = document.getElementById("pills");
+
+function init(){
+  Object.keys(DATA).forEach((cat)=>{
+    const opt=document.createElement("option");
+    opt.value=cat; opt.textContent=cat;
+    catSelect.appendChild(opt);
+  });
+  catSelect.addEventListener("change", loadCards);
+  cardSelect.addEventListener("change", showNotes);
+  loadCards();
+}
+
+function loadCards(){
+  cardSelect.innerHTML="";
+  const cat = catSelect.value;
+  DATA[cat].forEach((c,i)=>{
+    const opt=document.createElement("option");
+    opt.value=i;
+    opt.textContent=c.name;
+    cardSelect.appendChild(opt);
+  });
+  showNotes();
+}
+
+function currentCard(){
+  const cat = catSelect.value;
+  const idx = parseInt(cardSelect.value || "0", 10);
+  return DATA[cat][idx];
+}
+
+function showNotes(){
+  const c = currentCard();
+  pillsEl.innerHTML = "";
+  c.tags.forEach(t=>{
+    const span=document.createElement("span");
+    span.className="pill";
+    span.textContent=t;
+    pillsEl.appendChild(span);
+  });
+  notesEl.textContent = "Search phrase: " + c.search + "  |  " + c.notes;
+}
+
+function q(){ return encodeURIComponent(currentCard().search); }
+
+function ebaySoldUK(){
+  window.open(`https://www.ebay.co.uk/sch/i.html?_nkw=${q()}&LH_Sold=1&LH_Complete=1`, "_blank");
+}
+function ebayLiveUK(){
+  window.open(`https://www.ebay.co.uk/sch/i.html?_nkw=${q()}`, "_blank");
+}
+function ebaySoldWW(){
+  window.open(`https://www.ebay.com/sch/i.html?_nkw=${q()}&LH_Sold=1&LH_Complete=1`, "_blank");
+}
+function vintedSearch(){
+  window.open(`https://www.vinted.co.uk/catalog?search_text=${q()}`, "_blank");
+}
+
+init();
+
+/* Service Worker (same as main) */
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+}
+</script>
+
+</body>
+</html> 
